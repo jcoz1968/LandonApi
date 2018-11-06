@@ -30,6 +30,8 @@ namespace LandonApi
             services.AddMvc(options => 
             {
                 options.Filters.Add<JsonExceptionFilter>();
+                options.Filters.Add<RequireHttpsOrCloseAttribute>();
+
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddRouting(options => options.LowercaseUrls = true);
@@ -40,6 +42,15 @@ namespace LandonApi
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.ReportApiVersions = true;
                 options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options);
+            });
+
+            // Should get this to only whitelisted origins
+            services.AddCors(options => 
+            {
+                options.AddPolicy("AllowWebApp", policy => 
+                {
+                    policy.AllowAnyOrigin();
+                });
             });
         }
 
@@ -58,7 +69,9 @@ namespace LandonApi
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            app.UseCors("AllowWebApp");
+
+            // app.UseHttpsRedirection(); - Remove because of filter
             app.UseMvc();
         }
     }
