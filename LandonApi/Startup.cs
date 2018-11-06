@@ -30,6 +30,8 @@ namespace LandonApi
             services.AddMvc(options => 
             {
                 options.Filters.Add<JsonExceptionFilter>();
+                options.Filters.Add<RequireHttpsOrCloseAttribute>();
+
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddRouting(options => options.LowercaseUrls = true);
@@ -58,7 +60,7 @@ namespace LandonApi
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection(); - Remove because of filter
             app.UseMvc();
         }
     }
