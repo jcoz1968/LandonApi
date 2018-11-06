@@ -43,6 +43,15 @@ namespace LandonApi
                 options.ReportApiVersions = true;
                 options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options);
             });
+
+            // Should get this to only whitelisted origins
+            services.AddCors(options => 
+            {
+                options.AddPolicy("AllowWebApp", policy => 
+                {
+                    policy.AllowAnyOrigin();
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -59,6 +68,8 @@ namespace LandonApi
             {
                 app.UseHsts();
             }
+
+            app.UseCors("AllowWebApp");
 
             // app.UseHttpsRedirection(); - Remove because of filter
             app.UseMvc();
