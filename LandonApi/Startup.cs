@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NSwag.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using LandonApi.Data;
+using LandonApi.Services;
 
 namespace LandonApi
 {
@@ -24,6 +25,9 @@ namespace LandonApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<HotelInfo>(Configuration.GetSection("Info"));
+
+
+            services.AddScoped<IRoomService, DefaultRoomService>();
 
             // use in-memory db for dev and testing
             // TODO: swap for real in prod
