@@ -10,6 +10,9 @@ using NSwag.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using LandonApi.Data;
 using LandonApi.Services;
+using AutoMapper;
+using System;
+using LandonApi.Infrastructure;
 
 namespace LandonApi
 {
@@ -58,6 +61,13 @@ namespace LandonApi
                     policy.AllowAnyOrigin();
                 });
             });
+
+            services.AddAutoMapper(options => options.AddProfile<MappingProfile>());
+        }
+
+        private int MappingProfile()
+        {
+            throw new NotImplementedException();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
