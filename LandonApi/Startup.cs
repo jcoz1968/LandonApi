@@ -31,6 +31,9 @@ namespace LandonApi
 
 
             services.AddScoped<IRoomService, DefaultRoomService>();
+            services.AddScoped<IOpeningService, DefaultOpeningService>();
+            services.AddScoped<IBookingService, DefaultBookingService>();
+            services.AddScoped<IDateLogicService, DefaultDateLogicService>();
 
             // use in-memory db for dev and testing
             // TODO: swap for real in prod

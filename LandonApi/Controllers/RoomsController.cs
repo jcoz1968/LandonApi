@@ -15,10 +15,28 @@ namespace LandonApi.Controllers
     public class RoomsController : ControllerBase
     {
         private readonly IRoomService _roomService;
+        private readonly IOpeningService _openingService;
 
-        public RoomsController(IRoomService roomService)
+        public RoomsController(IRoomService roomService, IOpeningService openingService)
         {
             _roomService = roomService;
+            _openingService = openingService;
+        }
+
+        // GET /rooms/openings
+        [HttpGet("openings", Name = nameof(GetAllRoomOpenings))]
+        [ProducesResponseType(200)]
+        public async Task<ActionResult<Collection<Opening>>> GetAllRoomOpenings()
+        {
+            var openings = await _openingService.GetOpeningsAsync();
+
+            var collection = new Collection<Opening>()
+            {
+                Self = Link.ToCollection(nameof(GetAllRoomOpenings)),
+                Value = openings.ToArray()
+            };
+
+            return collection;
         }
 
         [HttpGet(Name = nameof(GetAllRooms))]
