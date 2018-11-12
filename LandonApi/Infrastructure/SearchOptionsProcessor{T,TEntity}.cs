@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -85,10 +86,46 @@ namespace LandonApi.Infrastructure
             }
         }
 
+        public IQueryable<TEntity> Apply(IQueryable<TEntity> query)
+        {
+            var terms = GetValidTerms().ToArray();
+            if (!terms.Any()) return query;
+
+            var modifiedQuery = query;
+
+            foreach (var term in terms)
+            {
+                var propertyInfo = ExpressionHelper
+                    .GetPropertyInfo<TEntity>(term.Name);
+                var obj = ExpressionHelper.Parameter<TEntity>();
+
+                // Build up the LINQ expression backwards:
+                // query = query.Where(x => x.Property == "Value");
+
+                // x.Property
+                var left = ExpressionHelper.GetPropertyExpression(obj, propertyInfo);
+                // "Value"
+                var right = Expression.Constant(term.Value);
+
+                // x.Property == "Value"
+                var comparisonExpression = Expression.Equal(left, right);
+
+                // x => x.Property == "Value"
+                var lambdaExpression = ExpressionHelper
+                    .GetLambda<TEntity, bool>(obj, comparisonExpression);
+
+                // query = query.Where...
+                modifiedQuery = ExpressionHelper.CallWhere(modifiedQuery, lambdaExpression);
+            }
+
+            return modifiedQuery;
+        }
+
         private static IEnumerable<SearchTerm> GetTermsFromModel()
             => typeof(T).GetTypeInfo()
             .DeclaredProperties
             .Where(p => p.GetCustomAttributes<SearchableAttribute>().Any())
             .Select(p => new SearchTerm { Name = p.Name });
+
     }
 }
