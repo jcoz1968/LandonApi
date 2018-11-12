@@ -40,6 +40,7 @@ namespace LandonApi
             {
                 options.Filters.Add<JsonExceptionFilter>();
                 options.Filters.Add<RequireHttpsOrCloseAttribute>();
+                options.Filters.Add<LinkRewritingFilter>();
 
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
