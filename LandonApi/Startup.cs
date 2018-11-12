@@ -37,6 +37,8 @@ namespace LandonApi
         {
             services.Configure<HotelInfo>(Configuration.GetSection("Info"));
             services.Configure<HotelOptions>(Configuration);
+            services.Configure<PagingOptions>(Configuration.GetSection("DefaultPagingOptions"));
+
 
             services.AddScoped<IRoomService, DefaultRoomService>();
             services.AddScoped<IOpeningService, DefaultOpeningService>();
@@ -82,6 +84,15 @@ namespace LandonApi
 
             services.AddAutoMapper(
                 options => options.AddProfile<MappingProfile>());
+
+            services.Configure<ApiBehaviorOptions>(options => 
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var errorResponse = new ApiError(context.ModelState);
+                    return new BadRequestObjectResult(errorResponse);
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
