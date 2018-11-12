@@ -70,7 +70,8 @@ namespace LandonApi.Services
             return await _context.Bookings
                 .Where(b => b.Room.Id == roomId && _dateLogicService.DoesConflict(b, start, end))
                 // Split each existing booking up into a set of atomic slots
-                .SelectMany(existing => _dateLogicService.GetAllSlots(existing.StartAt, existing.EndAt))
+                .SelectMany(existing => _dateLogicService
+                    .GetAllSlots(existing.StartAt, existing.EndAt))
                 .ToArrayAsync();
         }
     }
