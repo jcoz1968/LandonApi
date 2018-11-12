@@ -81,7 +81,8 @@ namespace LandonApi.Infrastructure
                     ValidSyntax = term.ValidSyntax,
                     Name = declaredTerm.Name,
                     Operator = term.Operator,
-                    Value = term.Value
+                    Value = term.Value,
+                    ExpressionProvider = declaredTerm.ExpressionProvider
                 };
             }
         }
@@ -105,7 +106,7 @@ namespace LandonApi.Infrastructure
                 // x.Property
                 var left = ExpressionHelper.GetPropertyExpression(obj, propertyInfo);
                 // "Value"
-                var right = Expression.Constant(term.Value);
+                var right = term.ExpressionProvider.GetValue(term.Value);
 
                 // x.Property == "Value"
                 var comparisonExpression = Expression.Equal(left, right);
@@ -125,7 +126,10 @@ namespace LandonApi.Infrastructure
             => typeof(T).GetTypeInfo()
             .DeclaredProperties
             .Where(p => p.GetCustomAttributes<SearchableAttribute>().Any())
-            .Select(p => new SearchTerm { Name = p.Name });
+            .Select(p => new SearchTerm {
+                Name = p.Name,
+                ExpressionProvider = p.GetCustomAttribute<SearchableAttribute>().ExpressionProvider
+            });
 
     }
 }
