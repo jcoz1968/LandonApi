@@ -57,7 +57,8 @@ namespace LandonApi.Infrastructure
                 yield return new SortTerm
                 {
                     Name = declaredTerm.Name,
-                    Descending = term.Descending
+                    Descending = term.Descending,
+                    Default = declaredTerm.Default
                 };
             }
         }
@@ -66,7 +67,11 @@ namespace LandonApi.Infrastructure
             => typeof(T).GetTypeInfo()
             .DeclaredProperties
             .Where(p => p.GetCustomAttributes<SortableAttribute>().Any())
-            .Select(p => new SortTerm { Name = p.Name });
+            .Select(p => new SortTerm {
+                Name = p.Name,
+                Default = p.GetCustomAttribute<SortableAttribute>().Default
+
+            });
 
         public IQueryable<TEntity> Apply(IQueryable<TEntity> query)
         {
