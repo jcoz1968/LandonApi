@@ -10,7 +10,6 @@ namespace LandonApi.Data
 {
     public static class SeedData
     {
-
         public static async Task InitializeAsync(IServiceProvider services)
         {
             await AddTestData(
@@ -19,8 +18,8 @@ namespace LandonApi.Data
         }
 
         public static async Task AddTestData(
-             HotelApiDbContext context,
-             IDateLogicService dateLogicService)
+            HotelApiDbContext context,
+            IDateLogicService dateLogicService)
         {
             if (context.Rooms.Any())
             {

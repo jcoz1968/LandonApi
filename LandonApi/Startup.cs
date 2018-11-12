@@ -13,6 +13,7 @@ using LandonApi.Services;
 using AutoMapper;
 using System;
 using LandonApi.Infrastructure;
+using Newtonsoft.Json;
 
 namespace LandonApi
 {
@@ -45,7 +46,15 @@ namespace LandonApi
                 options.Filters.Add<RequireHttpsOrCloseAttribute>();
                 options.Filters.Add<LinkRewritingFilter>();
 
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            .AddJsonOptions(options =>
+            {
+                // These should be the defaults, but we can be explicit:
+                options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+                options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+                options.SerializerSettings.DateParseHandling = DateParseHandling.DateTimeOffset;
+
+            }); 
 
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddApiVersioning(options => 
