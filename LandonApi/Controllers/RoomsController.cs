@@ -16,15 +16,18 @@ namespace LandonApi.Controllers
     {
         private readonly IRoomService _roomService;
         private readonly IOpeningService _openingService;
+        private readonly IDateLogicService _dateLogicService;
         private readonly PagingOptions _defaultPagingOptions;
 
         public RoomsController(
             IRoomService roomService,
             IOpeningService openingService,
+            IDateLogicService dateLogicService,
             IOptions<PagingOptions> defaultPagingOptionsWrapper)
         {
             _roomService = roomService;
             _openingService = openingService;
+            _dateLogicService = dateLogicService;
             _defaultPagingOptions = defaultPagingOptionsWrapper.Value;
         }
 
